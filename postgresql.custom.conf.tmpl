@@ -10,9 +10,9 @@ maintenance_work_mem = 512MB
 # https://github.com/openstreetmap/chef/blob/master/roles/tile.rb#L38-L45
 
 max_connections = 250
-temp_buffers = 128MB
-work_mem = 1024MB
-wal_buffers = 2048kB
+temp_buffers = 32MB
+work_mem = 128MB
+wal_buffers = 1024kB
 wal_writer_delay = 500ms
 commit_delay = 10000
 # checkpoint_segments = 60 # unrecognized in psql 10.7.1
