@@ -13,7 +13,7 @@ function setPostgresPassword() {
 }
 
 if [ "$#" -ne 1 ]; then
-    echo "usage: <import|run>"
+    echo "usage: <import|run|test>"
     echo "commands:"
     echo "    import: Set up the database and import /data.osm.pbf"
     echo "    run: Runs Apache and renderd to serve tiles at /tile/{z}/{x}/{y}.png"
@@ -140,6 +140,13 @@ if [ "$1" = "run" ]; then
     wait "$child"
 
     service postgresql stop
+
+    exit 0
+fi
+
+if [ "$1" = "run" ]; then
+	apt-get install -y --no-install-recommends mc
+	mc
 
     exit 0
 fi
