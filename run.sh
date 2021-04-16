@@ -42,12 +42,19 @@ if [ "$1" = "import" ]; then
     setPostgresPassword
 
 	let OSMTABCOUNT=0+$(sudo -u postgres psql -d gis -X -A -c "select count(*) from information_schema.tables where table_schema = 'public' and table_catalog = 'gis'" -q -t)
-	if ((OSMTABCOUNT==0)); then echo No OSM tables; else echo OSM tables count: $OSMTABCOUNT
+	echo $OSMTABCOUNT
+
+	if ((OSMTABCOUNT==0)); then echo No OSM tables; else echo OSM tables count: $OSMTABCOUNT; fi
+
 	if ((OSMTABCOUNT>0)); then
-		echo "### OSM tables already exists!"
-		echo "### To create new OSM data use environment variable \$OVERWRITEOSMDATA"
+		set +x >null
+		echo "@@@ OSM tables already exists!"
+		echo "@@@ To create new OSM data use environment variable \$OVERWRITEOSMDATA"
+		set -x
 		exit 5
 	fi
+
+	echo Begin import process
 
     # Download Luxembourg as sample if no data is provided
     if [ ! -f /data.osm.pbf ] && [ -z "$DOWNLOAD_PBF" ]; then
