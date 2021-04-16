@@ -144,7 +144,7 @@ if [ "$1" = "run" ]; then
     exit 0
 fi
 
-if [ "$1" = "run" ]; then
+if [ "$1" = "test" ]; then
 	apt-get install -y --no-install-recommends mc
 	mc
 
