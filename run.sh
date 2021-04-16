@@ -41,8 +41,7 @@ if [ "$1" = "import" ]; then
     sudo -u postgres psql -d gis -c "ALTER TABLE spatial_ref_sys OWNER TO renderer;"
     setPostgresPassword
 
-	let OSMTABCOUNT=0+$(sudo -u postgres psql -d gis -X -A -c "select count(*) from information_schema.tables where table_schema = 'public' and table_catalog = 'gis'" -q -t)
-	echo $OSMTABCOUNT
+	let OSMTABCOUNT=0+$(sudo -u postgres psql -d gis -X -A -c "select count(*) from information_schema.tables where table_schema = 'public' and table_catalog = 'gis' and table_name <> 'spatial_ref_sys' and table_type <> 'VIEW'" -q -t)
 
 	if ((OSMTABCOUNT==0)); then echo No OSM tables; else echo OSM tables count: $OSMTABCOUNT; fi
 
@@ -90,7 +89,7 @@ if [ "$1" = "import" ]; then
     fi
 
     # Import data
-    sudo -u renderer osm2pgsql -d gis --append --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS}
+    sudo -u renderer osm2pgsql -d gis --create --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS}
 
     # Create indexes
     sudo -u postgres psql -d gis -f indexes.sql
