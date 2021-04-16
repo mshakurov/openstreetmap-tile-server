@@ -8,11 +8,13 @@ set -x
 	if ((OSMTABCOUNT==0)); then echo No OSM tables; else echo OSM tables count: $OSMTABCOUNT; fi
 
 	if ((OSMTABCOUNT>0)); then
-		set +x >null
-		echo "@@@ OSM tables already exists!"
-		echo "@@@ To create new OSM data use environment variable \$OVERWRITEOSMDATA"
-		set -x
-		exit 5
+		if [ "$OVERWRITEOSMDATA" == "enabled" ] || [ "$OVERWRITEOSMDATA" == "1" ]; then
+			echo "OSM tables already exists. All OSM data will be overwritten."
+		else
+			echo "@@@ OSM tables already exists!"
+			echo "@@@ To create new OSM data use environment variable \$OVERWRITEOSMDATA"
+			exit 5
+		fi
 	fi
 
 	echo Begin import process
