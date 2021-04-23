@@ -6,10 +6,12 @@ function createPostgresConfig() {
   cp /etc/postgresql/12/main/postgresql.custom.conf.tmpl /etc/postgresql/12/main/conf.d/postgresql.custom.conf
   sudo -u postgres echo "autovacuum = $AUTOVACUUM" >> /etc/postgresql/12/main/conf.d/postgresql.custom.conf
   cat /etc/postgresql/12/main/conf.d/postgresql.custom.conf
+  echo "* <<< createPostgresConfig()"
 }
 
 function setPostgresPassword() {
     sudo -u postgres psql -c "ALTER USER renderer PASSWORD '${PGPASSWORD:-renderer}'"
+    echo "* <<< setPostgresPassword()"
 }
 
 if [ "$#" -ne 1 ]; then
@@ -104,29 +106,38 @@ if [ "$1" = "import" ]; then
 fi
 
 if [ "$1" = "run" ]; then
+    echo "* run *"
+
     # Clean /tmp
     rm -rf /tmp/*
+    echo "* tmp cleaned up"
 
     # Fix postgres data privileges
     chown postgres:postgres /var/lib/postgresql -R
+    echo "* postgres data privileges fixed"
 
     # Configure Apache CORS
     if [ "$ALLOW_CORS" == "enabled" ] || [ "$ALLOW_CORS" == "1" ]; then
         echo "export APACHE_ARGUMENTS='-D ALLOW_CORS'" >> /etc/apache2/envvars
+		echo "* Apache CORS configured"
     fi
 
     # Initialize PostgreSQL and Apache
     createPostgresConfig
     service postgresql start
+    echo "* service postgresql started"
     service apache2 restart
+    echo "* service apache2 started"
     setPostgresPassword
 
     # Configure renderd threads
     sed -i -E "s/num_threads=[0-9]+/num_threads=${THREADS:-4}/g" /usr/local/etc/renderd.conf
+    echo "* renderd threads configured"
 
     # start cron job to trigger consecutive updates
     if [ "$UPDATES" = "enabled" ] || [ "$UPDATES" = "1" ]; then
       /etc/init.d/cron start
+      echo "* cron job to trigger consecutive updates started"
     fi
 
     # Run while handling docker stop's SIGTERM
@@ -137,6 +148,7 @@ if [ "$1" = "run" ]; then
 
     sudo -u renderer renderd -f -c /usr/local/etc/renderd.conf &
     child=$!
+    echo "* waiting renderer process ($child) finished ..."
     wait "$child"
 
     service postgresql stop

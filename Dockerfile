@@ -145,6 +145,14 @@ RUN mkdir /var/lib/mod_tile \
  && a2enconf mod_tile && a2enconf mod_headers
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY leaflet-demo.html /var/www/html/index.html
+COPY L.Control.MousePosition.css /var/www/html/L.Control.MousePosition.css
+COPY L.Control.MousePosition.js /var/www/html/L.Control.MousePosition.js
+COPY leaflet-reticle.css /var/www/html/leaflet-reticle.css
+COPY leaflet-reticle.js /var/www/html/leaflet-reticle.js
+COPY leaflet-ruler.css /var/www/html/leaflet-ruler.css
+COPY leaflet-ruler.js /var/www/html/leaflet-ruler.js
+COPY ruler-icon.png /var/www/html/ruler-icon.png
+COPY ruler-icon-colored.png /var/www/html/ruler-icon-colored.png
 RUN ln -sf /dev/stdout /var/log/apache2/access.log \
  && ln -sf /dev/stderr /var/log/apache2/error.log
 
@@ -154,6 +162,8 @@ RUN chown -R postgres:postgres /var/lib/postgresql \
  && chown postgres:postgres /etc/postgresql/12/main/postgresql.custom.conf.tmpl \
  && echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/12/main/pg_hba.conf \
  && echo "host all all ::/0 md5" >> /etc/postgresql/12/main/pg_hba.conf
+COPY psql/max_ids /home/user/downloads/max_ids
+RUN chmod +x /home/user/downloads/max_ids
 
 # Copy update scripts
 COPY openstreetmap-tiles-update-expire /usr/bin/

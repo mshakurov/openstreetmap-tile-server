@@ -1,18 +1,18 @@
 # Suggested minimal settings from
 # https://ircama.github.io/osm-carto-tutorials/tile-server-ubuntu/
 
-shared_buffers = 512MB
+shared_buffers = 1024MB
 min_wal_size = 1GB
-max_wal_size = 3GB
-maintenance_work_mem = 512MB
+max_wal_size = 6GB
+maintenance_work_mem = 1024MB
 
 # Suggested settings from
 # https://github.com/openstreetmap/chef/blob/master/roles/tile.rb#L38-L45
 
 max_connections = 250
 temp_buffers = 32MB
-work_mem = 128MB
-wal_buffers = 1024kB
+work_mem = 512MB
+wal_buffers = 2048kB
 wal_writer_delay = 500ms
 commit_delay = 10000
 # checkpoint_segments = 60 # unrecognized in psql 10.7.1
@@ -23,3 +23,26 @@ autovacuum_vacuum_scale_factor = 0.05
 autovacuum_analyze_scale_factor = 0.02
 
 listen_addresses = '*'
+
+# Setings got (and corrected) from https://github.com/openstreetmap/chef/blob/41bdac8f1d96696cd28642ef0247a07ed59cfae8/roles/prometheus.rb
+#max_connections = "500"
+#shared_buffers = "48GB"
+shared_buffers = 4GB
+#work_mem = "8MB"
+maintenance_work_mem = 2GB
+effective_io_concurrency = 200
+max_worker_processes = 67
+max_parallel_workers_per_gather = 28
+max_parallel_workers = 56
+wal_buffers = 16MB
+# max_wal_size = "32GB"
+max_wal_size = 7GB
+min_wal_size = 4GB
+checkpoint_completion_target = 0.9
+random_page_cost = 1.1
+effective_cache_size = 144GB
+default_statistics_target = 500
+log_autovacuum_min_duration = 0
+# autovacuum_max_workers = "10"
+# autovacuum_naptime = "10"
+# autovacuum_multixact_freeze_max_age = "20
